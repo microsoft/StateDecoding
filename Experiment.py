@@ -2,7 +2,7 @@ import numpy as np
 import sys, os
 import gym
 import Environments, Params
-import OracleQ, Decoding, QLearning
+import OracleQ, Decoding, QLearning, LinQ
 import argparse
 import torch
 import random
@@ -49,6 +49,12 @@ def get_alg(name, args, env):
             'epsfrac': float(args.epsfrac),
             'num_episodes': int(args.episodes)}
         alg = QLearning.QLearning(env.action_space.n, params=alg_dict)
+    elif name == 'linq':
+        alg_dict = {
+            'horizon': env.horizon,
+            'conf': args.conf
+            }
+        alg = LinQ.LinQ(env.observation_space.n, env.action_space.n,params=alg_dict)
     return (alg)
 
 def parse_args():
@@ -72,7 +78,7 @@ def parse_args():
     parser.add_argument('--env_param_2', type=str,
                         help='Additional Environment Parameters (Feature noise)', default=None)
     parser.add_argument('--alg', type=str, default='dqn',
-                        help='Learning Algorithm', choices=["oracleq", "decoding", "qlearning"])
+                        help='Learning Algorithm', choices=["oracleq", "decoding", "qlearning", "linq"])
     parser.add_argument('--model_type', type=str, default='linear',
                         help='What model class for function approximation', choices=['linear', 'nn'])
     parser.add_argument('--lr', type=float,
@@ -104,6 +110,7 @@ def train(env, alg, args):
         alg.finish_episode()
         if t % 100 == 0:
             reward_vec.append(running_reward)
+            print("[EXPERIMENT] Episode %d Completed. Average reward: %0.2f" % (t, running_reward/t), flush=True)
         if t % 1000 == 0:
             print("[EXPERIMENT] Episode %d Completed. Average reward: %0.2f" % (t, running_reward/t), flush=True)
     return (reward_vec)
