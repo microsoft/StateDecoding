@@ -1,13 +1,15 @@
 import numpy as np
 from collections import namedtuple
 import random
+import scipy.sparse.linalg
+import scipy.linalg
 
 Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))
 
 def isPSD(A, tol=1e-8):
-  E = np.linalg.eigvalsh(A)
-  return np.max(E) > -tol
+  (E3,V) = scipy.sparse.linalg.eigs(A,k=1,which='LR')
+  return np.max(E3) > -tol
 
 class LinQ(object):
     def get_name(self):
@@ -15,7 +17,6 @@ class LinQ(object):
 
     def __init__(self,dimension,actions,params={}):
         self.weights = []
-#         self.data = []
         self.covs = []
         self.invs = []
         self.old_covs = []
