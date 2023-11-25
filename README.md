@@ -44,10 +44,10 @@ may use this as follows:
 
 ```
 import Params
-for s in Parameters['Lock-v0']['oracleq']:
+for s in Params.Parameters['Lock-v0']['oracleq']:
     P = Params.Params(s)
     P.iteration = 1
-    print("python3 -W ignore Experiment.py %s" % (P.get_params_string()))
+    print("python3 -W ignore Experiment.py %s" % (P.get_param_str()))
 ```
 
 This code snippet will print all commands for the first replicate
